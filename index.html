@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Briangroup Sound Board</title>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --surface-hover: #1c1c1c;
+    --border: #262626;
+    --border-strong: #3a3a3a;
+    --text: #e8e6e1;
+    --muted: #8a857c;
+    --accent: #c8362d;
+    --accent-dim: rgba(200, 54, 45, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+    min-height: 100vh;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 20% 0%, rgba(200, 54, 45, 0.06), transparent 50%),
+      radial-gradient(circle at 80% 100%, rgba(200, 54, 45, 0.04), transparent 50%);
+    padding: 4rem 2rem 6rem;
+  }
+
+  .container {
+    max-width: 880px;
+    margin: 0 auto;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  h1 {
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  h1::before {
+    content: '';
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: var(--accent);
+    border-radius: 50%;
+    margin-right: 0.7rem;
+    vertical-align: middle;
+    transform: translateY(-1px);
+    box-shadow: 0 0 12px var(--accent);
+  }
+
+  .meta {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .meta .now-playing {
+    color: var(--accent);
+    margin-left: 0.5rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .pad {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 1.25rem 1rem;
+    text-align: left;
+    font: inherit;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: background 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
+    min-height: 92px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .pad:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-strong);
+  }
+
+  .pad:active {
+    transform: translateY(1px);
+  }
+
+  .pad .key {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.7rem;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  .pad .label {
+    text-transform: lowercase;
+    font-weight: 400;
+    line-height: 1.3;
+    margin-top: auto;
+  }
+
+  .pad .index {
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    margin-bottom: 0.4rem;
+  }
+
+  .pad.playing {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--text);
+  }
+
+  .pad.playing .key,
+  .pad.playing .index {
+    color: var(--accent);
+  }
+
+  .pad .progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background: var(--accent);
+    width: 0;
+    transition: width 0.05s linear;
+  }
+
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  footer kbd {
+    font-family: inherit;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0.1rem 0.4rem;
+    border-radius: 2px;
+    font-size: 0.65rem;
+    color: var(--text);
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 2rem 1rem 4rem; }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+    .pad { min-height: 80px; padding: 1rem 0.75rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Briangroup Sound Board</h1>
+    <span class="meta">
+      7 cues<span class="now-playing" id="now"></span>
+    </span>
+  </header>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>
+    <span>Click a pad or press its key. <kbd>Esc</kbd> stops all.</span>
+    <span>Local mirror · audio in <code>./audio/</code></span>
+  </footer>
+</div>
+
+<script>
+  const sounds = [
+    { label: 'bomb',            file: 'bomb.mp3',            key: '1' },
+    { label: 'oh really dude',  file: 'oh really dude.mp3',  key: '2' },
+    { label: 'bloop',           file: 'bloop.mp3',           key: '3' },
+    { label: 'hava nagila',     file: 'hava nagila.mp3',     key: '4' },
+    { label: 'police',          file: 'police.mp3',          key: '5' },
+    { label: 'prison',          file: 'prison.mp3',          key: '6' },
+    { label: 'faaah',           file: 'faaah.mp3',           key: '7' },
+  ];
+
+  const grid = document.getElementById('grid');
+  const nowEl = document.getElementById('now');
+  const audios = new Map();
+  let currentLabel = null;
+
+  sounds.forEach((s, i) => {
+    const audio = new Audio('audio/' + encodeURIComponent(s.file));
+    audio.preload = 'metadata';
+    audios.set(s.label, audio);
+
+    const pad = document.createElement('button');
+    pad.className = 'pad';
+    pad.dataset.label = s.label;
+    pad.innerHTML = `
+      <span class="key">${s.key}</span>
+      <span class="index">${String(i + 1).padStart(2, '0')}</span>
+      <span class="label">${s.label}</span>
+      <span class="progress"></span>
+    `;
+    pad.addEventListener('click', () => play(s.label));
+    grid.appendChild(pad);
+
+    const progress = pad.querySelector('.progress');
+    audio.addEventListener('timeupdate', () => {
+      if (audio.duration) progress.style.width = (audio.currentTime / audio.duration * 100) + '%';
+    });
+    audio.addEventListener('ended', () => {
+      pad.classList.remove('playing');
+      progress.style.width = '0';
+      if (currentLabel === s.label) { currentLabel = null; nowEl.textContent = ''; }
+    });
+  });
+
+  function stopAll() {
+    audios.forEach((a, label) => {
+      a.pause();
+      a.currentTime = 0;
+      const pad = grid.querySelector(`[data-label="${cssEscape(label)}"]`);
+      if (pad) {
+        pad.classList.remove('playing');
+        pad.querySelector('.progress').style.width = '0';
+      }
+    });
+    currentLabel = null;
+    nowEl.textContent = '';
+  }
+
+  function play(label) {
+    if (currentLabel === label) { stopAll(); return; }
+    stopAll();
+    const a = audios.get(label);
+    if (!a) return;
+    a.currentTime = 0;
+    a.play();
+    currentLabel = label;
+    nowEl.textContent = '· ' + label;
+    const pad = grid.querySelector(`[data-label="${cssEscape(label)}"]`);
+    if (pad) pad.classList.add('playing');
+  }
+
+  function cssEscape(s) {
+    return s.replace(/"/g, '\\"');
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { stopAll(); return; }
+    const k = e.key.toUpperCase();
+    const match = sounds.find(s => s.key === k);
+    if (match) { e.preventDefault(); play(match.label); }
+  });
+</script>
+</body>
+</html>
