@@ -1,6 +1,6 @@
 # Briangroup Sound Board
 
-Static soundboard. Click a pad or use keys `1`–`8`. `Esc` stops playback.
+Static soundboard. Click a pad or use keys `1`–`9`. `Esc` stops playback.
 
 Live: https://bnuckols13.github.io/briangroup-soundboard/
 
