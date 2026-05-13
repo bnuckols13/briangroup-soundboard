@@ -3,209 +3,568 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Briangroup Sound Board</title>
+<title>BRIANGROUP SOUNDBOARD · HEAL MAXXING</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0a0a;
-    --surface: #141414;
-    --surface-hover: #1c1c1c;
-    --border: #262626;
-    --border-strong: #3a3a3a;
-    --text: #e8e6e1;
-    --muted: #8a857c;
-    --accent: #c8362d;
-    --accent-dim: rgba(200, 54, 45, 0.12);
+    --bg: #0a0014;
+    --ink: #f5f1e8;
+    --pink: #ff2e9a;
+    --cyan: #00f0ff;
+    --lime: #c8ff00;
+    --gold: #ffd23f;
+    --red: #ff3344;
+    --surface: #14001f;
+    --border: #ff2e9a;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   html, body {
     background: var(--bg);
-    color: var(--text);
-    font-family: 'IBM Plex Mono', 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+    color: var(--ink);
+    font-family: 'JetBrains Mono', monospace;
     min-height: 100vh;
+    overflow-x: hidden;
   }
 
   body {
-    background-image:
-      radial-gradient(circle at 20% 0%, rgba(200, 54, 45, 0.06), transparent 50%),
-      radial-gradient(circle at 80% 100%, rgba(200, 54, 45, 0.04), transparent 50%);
-    padding: 4rem 2rem 6rem;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(255, 46, 154, 0.35), transparent 45%),
+      radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.3), transparent 45%),
+      radial-gradient(circle at 50% 80%, rgba(200, 255, 0, 0.18), transparent 50%),
+      linear-gradient(180deg, #0a0014 0%, #1a0033 40%, #220047 100%);
   }
 
-  .container {
-    max-width: 880px;
+  /* Marquee */
+  .marquee {
+    background: var(--lime);
+    color: #000;
+    overflow: hidden;
+    white-space: nowrap;
+    border-bottom: 3px solid #000;
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    padding: 0.5rem 0;
+  }
+  .marquee-track {
+    display: inline-block;
+    animation: scroll 28s linear infinite;
+    padding-left: 100%;
+  }
+  @keyframes scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-100%); }
+  }
+  .marquee span { padding: 0 1.5rem; }
+  .marquee .dot { color: var(--pink); }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    padding: 3rem 1.5rem 1rem;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .title {
+    font-family: 'Bungee', sans-serif;
+    font-size: clamp(3rem, 11vw, 7.5rem);
+    line-height: 0.85;
+    letter-spacing: 0.01em;
+    background: linear-gradient(180deg, var(--gold) 0%, var(--pink) 55%, var(--cyan) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow:
+      0 0 30px rgba(255, 46, 154, 0.6),
+      0 0 60px rgba(0, 240, 255, 0.3);
+    filter: drop-shadow(4px 4px 0 #000);
+    animation: wobble 4s ease-in-out infinite;
+  }
+  @keyframes wobble {
+    0%, 100% { transform: rotate(-1deg) scale(1); }
+    50% { transform: rotate(1deg) scale(1.02); }
+  }
+
+  .subtitle {
+    font-family: 'Bungee', sans-serif;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    color: var(--ink);
+    margin-top: 0.8rem;
+    letter-spacing: 0.15em;
+    opacity: 0.85;
+  }
+  .subtitle .blink { color: var(--lime); animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Diagram */
+  .diagram-wrap {
+    position: relative;
+    max-width: 1100px;
+    margin: 2rem auto 4rem;
+    padding: 1rem;
+    aspect-ratio: 16 / 11;
+    min-height: 480px;
+  }
+
+  .stage {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at center bottom, rgba(0, 240, 255, 0.2), transparent 60%),
+      linear-gradient(180deg, rgba(255, 46, 154, 0.08), rgba(0, 0, 0, 0.4));
+    border: 3px dashed var(--cyan);
+    border-radius: 18px;
+    box-shadow:
+      0 0 40px rgba(0, 240, 255, 0.4),
+      inset 0 0 80px rgba(255, 46, 154, 0.18);
+  }
+
+  .statue {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(220px, 38%, 360px);
+    aspect-ratio: 3 / 4;
+    z-index: 2;
+    filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.6));
+  }
+
+  .statue svg { width: 100%; height: 100%; display: block; position: relative; z-index: 1; }
+
+  /* Face-disc covers the SVG head circle (cx=150, cy=75, r=42 in 300x400 viewBox) */
+  .face-disc {
+    position: absolute;
+    left: 36%;          /* 108/300 */
+    top: 8.25%;         /* 33/400 */
+    width: 28%;         /* 84/300 */
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: url('assets/brian.png') center 30%/cover no-repeat;
+    border: 4px solid var(--gold);
+    box-shadow:
+      0 0 0 6px #000,
+      0 0 30px rgba(255, 210, 63, 0.9),
+      0 0 60px rgba(255, 46, 154, 0.7);
+    z-index: 3;
+    animation: bob 3.6s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-5px); }
+  }
+
+  .halo {
+    position: absolute;
+    left: 30%;          /* slightly larger than face, centered on cx=150 */
+    top: 2%;
+    width: 40%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 3px solid var(--gold);
+    box-shadow: 0 0 20px var(--gold), inset 0 0 20px var(--gold);
+    z-index: 2;
+    animation: spin 14s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Labels */
+  .label {
+    position: absolute;
+    background: #000;
+    color: var(--ink);
+    border: 3px solid var(--pink);
+    padding: 0.45rem 0.7rem;
+    font-family: 'Bungee', sans-serif;
+    font-size: clamp(0.7rem, 1.4vw, 0.95rem);
+    letter-spacing: 0.04em;
+    border-radius: 4px;
+    box-shadow: 5px 5px 0 var(--cyan);
+    z-index: 4;
+    white-space: nowrap;
+    transform: rotate(var(--rot, 0deg));
+  }
+  .label.cyan   { border-color: var(--cyan); box-shadow: 5px 5px 0 var(--pink); }
+  .label.lime   { border-color: var(--lime); box-shadow: 5px 5px 0 var(--pink); color: var(--lime); }
+  .label.gold   { border-color: var(--gold); box-shadow: 5px 5px 0 var(--cyan); color: var(--gold); }
+  .label.red    { border-color: var(--red);  box-shadow: 5px 5px 0 var(--lime); color: var(--red); background: #1a0000; }
+
+  .label small {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: rgba(245,241,232,0.6);
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+  }
+
+  /* Arrows (SVG overlay) */
+  .arrows {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .float-emoji {
+    position: absolute;
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    z-index: 3;
+    animation: float 5s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px rgba(255,210,63,0.8));
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(-10deg); }
+    50%      { transform: translateY(-14px) rotate(10deg); }
+  }
+
+  .aura-stat {
+    position: absolute;
+    font-family: 'Bungee', sans-serif;
+    color: var(--lime);
+    text-shadow: 0 0 12px var(--lime), 3px 3px 0 #000;
+    font-size: clamp(1rem, 2.4vw, 1.8rem);
+    z-index: 4;
+    transform: rotate(-6deg);
+  }
+
+  /* Soundboard */
+  .board {
+    max-width: 980px;
     margin: 0 auto;
+    padding: 2rem 1.5rem 5rem;
   }
 
-  header {
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 1.5rem;
-    margin-bottom: 2.5rem;
+  .board-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    gap: 2rem;
+    gap: 1rem;
     flex-wrap: wrap;
+    border-top: 3px solid var(--pink);
+    padding-top: 1.5rem;
+    margin-bottom: 1.5rem;
   }
-
-  h1 {
-    font-size: 0.95rem;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--text);
+  .board-header h2 {
+    font-family: 'Bungee', sans-serif;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    color: var(--cyan);
+    text-shadow: 3px 3px 0 #000, 0 0 20px var(--cyan);
+    letter-spacing: 0.04em;
   }
-
-  h1::before {
-    content: '';
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    background: var(--accent);
-    border-radius: 50%;
-    margin-right: 0.7rem;
-    vertical-align: middle;
-    transform: translateY(-1px);
-    box-shadow: 0 0 12px var(--accent);
-  }
-
-  .meta {
-    font-size: 0.72rem;
-    color: var(--muted);
+  .board-header .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--ink);
     letter-spacing: 0.1em;
-    text-transform: uppercase;
   }
-
-  .meta .now-playing {
-    color: var(--accent);
-    margin-left: 0.5rem;
+  .board-header .meta .now {
+    color: var(--lime);
+    margin-left: 0.4rem;
+    text-shadow: 0 0 8px var(--lime);
   }
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 0.8rem;
   }
 
   .pad {
     position: relative;
     background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 1.25rem 1rem;
+    border: 2px solid var(--border);
+    color: var(--ink);
+    padding: 1.2rem 1rem 1.5rem;
     text-align: left;
     font: inherit;
-    font-size: 0.8rem;
-    letter-spacing: 0.05em;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
     cursor: pointer;
-    transition: background 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
-    min-height: 92px;
+    transition: transform 0.08s ease, box-shadow 0.12s ease, background 0.12s ease;
+    min-height: 100px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     overflow: hidden;
+    box-shadow: 4px 4px 0 var(--cyan);
+    border-radius: 3px;
+  }
+
+  .pad::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 60%, rgba(255, 46, 154, 0.15) 100%);
+    pointer-events: none;
   }
 
   .pad:hover {
-    background: var(--surface-hover);
-    border-color: var(--border-strong);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--lime);
+    background: #1f0030;
   }
-
-  .pad:active {
-    transform: translateY(1px);
-  }
+  .pad:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--cyan); }
 
   .pad .key {
     position: absolute;
-    top: 0.6rem;
+    top: 0.55rem;
     right: 0.7rem;
-    font-size: 0.65rem;
-    color: var(--muted);
-    letter-spacing: 0.08em;
-  }
-
-  .pad .label {
-    text-transform: lowercase;
-    font-weight: 400;
-    line-height: 1.3;
-    margin-top: auto;
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.85rem;
+    color: var(--gold);
+    text-shadow: 0 0 10px var(--gold);
   }
 
   .pad .index {
-    font-size: 0.65rem;
-    color: var(--muted);
-    letter-spacing: 0.12em;
+    font-size: 0.6rem;
+    color: var(--cyan);
+    letter-spacing: 0.18em;
     margin-bottom: 0.4rem;
+    font-weight: 700;
+  }
+
+  .pad .label-text {
+    font-family: 'Bungee', sans-serif;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-top: auto;
   }
 
   .pad.playing {
-    background: var(--accent-dim);
-    border-color: var(--accent);
-    color: var(--text);
+    background: linear-gradient(135deg, #ff2e9a 0%, #00f0ff 100%);
+    border-color: var(--lime);
+    box-shadow: 4px 4px 0 var(--lime), 0 0 30px rgba(255, 46, 154, 0.8);
+    animation: pulse 0.6s ease-in-out infinite;
   }
-
+  @keyframes pulse {
+    50% { box-shadow: 4px 4px 0 var(--gold), 0 0 40px rgba(0, 240, 255, 0.9); }
+  }
   .pad.playing .key,
-  .pad.playing .index {
-    color: var(--accent);
-  }
+  .pad.playing .index { color: #000; text-shadow: none; }
+  .pad.playing .label-text { color: #000; }
 
   .pad .progress {
     position: absolute;
     bottom: 0;
     left: 0;
-    height: 2px;
-    background: var(--accent);
+    height: 4px;
+    background: var(--lime);
     width: 0;
     transition: width 0.05s linear;
+    box-shadow: 0 0 10px var(--lime);
   }
 
   footer {
-    margin-top: 3rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--border);
-    color: var(--muted);
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 1.5rem 3rem;
+    color: rgba(245,241,232,0.6);
     font-size: 0.7rem;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 1rem;
+    font-family: 'JetBrains Mono', monospace;
   }
-
   footer kbd {
     font-family: inherit;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 0.1rem 0.4rem;
+    background: #000;
+    border: 1px solid var(--pink);
+    padding: 0.1rem 0.5rem;
     border-radius: 2px;
     font-size: 0.65rem;
-    color: var(--text);
+    color: var(--pink);
+  }
+
+  /* Mobile-specific label trims */
+  @media (max-width: 720px) {
+    .diagram-wrap { aspect-ratio: 4 / 5; min-height: 640px; padding: 0.5rem; }
+    .label { font-size: 0.6rem; padding: 0.3rem 0.5rem; box-shadow: 3px 3px 0 var(--cyan); max-width: 150px !important; }
+    .label small { display: none; }
+    .label.red { bottom: 12% !important; }
+    .statue { width: 50%; }
+    .aura-stat { font-size: 0.85rem; right: 6% !important; top: 2% !important; }
+    .float-emoji { font-size: 1.1rem; }
   }
 
   @media (max-width: 480px) {
-    body { padding: 2rem 1rem 4rem; }
-    .grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
-    .pad { min-height: 80px; padding: 1rem 0.75rem; }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+    .pad { min-height: 90px; padding: 0.9rem 0.7rem 1.2rem; }
+    .pad .label-text { font-size: 0.8rem; }
+    .diagram-wrap { aspect-ratio: 3 / 5; min-height: 580px; }
+    .statue { width: 56%; }
   }
 </style>
 </head>
 <body>
-<div class="container">
-  <header>
-    <h1>Briangroup Sound Board</h1>
-    <span class="meta">
-      27 cues<span class="now-playing" id="now"></span>
-    </span>
-  </header>
-
-  <div class="grid" id="grid"></div>
-
-  <footer>
-    <span>Click a pad or press its key. <kbd>Esc</kbd> stops all.</span>
-    <span>Local mirror · audio in <code>./audio/</code></span>
-  </footer>
+<div class="marquee">
+  <div class="marquee-track">
+    <span>✝️ NOW HEAL MAXXING</span><span class="dot">●</span>
+    <span>VAGUS NERVE: TONED</span><span class="dot">●</span>
+    <span>+9000 AURA</span><span class="dot">●</span>
+    <span>CORTISOL: DOWN BAD</span><span class="dot">●</span>
+    <span>LICENSED IN PA · TX · INTERNAL FAMILY SYSTEMS</span><span class="dot">●</span>
+    <span>COUNTERTRANSFERENCE PATCHED</span><span class="dot">●</span>
+    <span>WINDOW OF TOLERANCE: ENLARGED</span><span class="dot">●</span>
+    <span>DSM PILLED · PSYCHODYNAMIC BUILD</span><span class="dot">●</span>
+    <span>BRIANGROUP SOUND BOARD</span><span class="dot">●</span>
+  </div>
 </div>
+
+<section class="hero">
+  <h1 class="title">HEAL MAXXING</h1>
+  <div class="subtitle">a diagram for the boys <span class="blink">▮</span></div>
+
+  <div class="diagram-wrap">
+    <div class="stage"></div>
+
+    <!-- Arrows -->
+    <svg class="arrows" viewBox="0 0 1000 700" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <marker id="arrowPink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#ff2e9a"/>
+        </marker>
+        <marker id="arrowCyan" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#00f0ff"/>
+        </marker>
+        <marker id="arrowLime" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#c8ff00"/>
+        </marker>
+        <marker id="arrowGold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#ffd23f"/>
+        </marker>
+      </defs>
+      <g fill="none" stroke-width="3" stroke-linecap="round">
+        <!-- to face/halo -->
+        <path d="M 130 110 Q 320 110 470 130" stroke="#ffd23f" marker-end="url(#arrowGold)"/>
+        <!-- to chest -->
+        <path d="M 880 130 Q 700 200 560 270" stroke="#ff2e9a" marker-end="url(#arrowPink)"/>
+        <!-- to left arm -->
+        <path d="M 90 320 Q 250 310 360 320" stroke="#00f0ff" marker-end="url(#arrowCyan)"/>
+        <!-- to right arm -->
+        <path d="M 910 310 Q 770 310 640 320" stroke="#c8ff00" marker-end="url(#arrowLime)"/>
+        <!-- to robe -->
+        <path d="M 140 540 Q 330 490 470 470" stroke="#c8ff00" marker-end="url(#arrowLime)"/>
+        <!-- to pedestal -->
+        <path d="M 890 580 Q 720 580 580 560" stroke="#00f0ff" marker-end="url(#arrowCyan)"/>
+        <!-- aura -->
+        <path d="M 500 30 Q 500 80 500 120" stroke="#ff2e9a" marker-end="url(#arrowPink)"/>
+      </g>
+    </svg>
+
+    <!-- Statue silhouette + face overlay (face is inside .statue so it scales with it) -->
+    <div class="statue">
+      <div class="halo" aria-hidden="true"></div>
+      <div class="face-disc" role="img" aria-label="Brian as Christ the Redeemer, heal maxxing"></div>
+      <svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="stone" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#e8e4d6"/>
+            <stop offset="40%" stop-color="#c9c2af"/>
+            <stop offset="100%" stop-color="#7a7363"/>
+          </linearGradient>
+          <linearGradient id="shadow" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#000" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#000" stop-opacity="0.5"/>
+          </linearGradient>
+        </defs>
+        <!-- Pedestal -->
+        <polygon points="60,400 240,400 220,370 80,370" fill="url(#stone)"/>
+        <rect x="80" y="350" width="140" height="22" fill="url(#stone)"/>
+        <!-- Robe / body -->
+        <path d="M 130 110
+                 L 170 110
+                 L 178 160
+                 L 230 175
+                 L 245 195
+                 L 235 210
+                 L 178 195
+                 L 188 350
+                 L 112 350
+                 L 122 195
+                 L 65 210
+                 L 55 195
+                 L 70 175
+                 L 122 160 Z"
+              fill="url(#stone)" stroke="#5a5447" stroke-width="2"/>
+        <!-- Arms (extending wide) -->
+        <rect x="0"   y="170" width="80"  height="35" rx="3" fill="url(#stone)" stroke="#5a5447" stroke-width="2"/>
+        <rect x="220" y="170" width="80"  height="35" rx="3" fill="url(#stone)" stroke="#5a5447" stroke-width="2"/>
+        <!-- Hands -->
+        <circle cx="6"   cy="187" r="14" fill="url(#stone)" stroke="#5a5447" stroke-width="2"/>
+        <circle cx="294" cy="187" r="14" fill="url(#stone)" stroke="#5a5447" stroke-width="2"/>
+        <!-- Neck -->
+        <rect x="140" y="95" width="20" height="25" fill="url(#stone)"/>
+        <!-- Head placeholder (will be covered by face-disc div) -->
+        <circle cx="150" cy="75" r="42" fill="#0a0014" stroke="#5a5447" stroke-width="2"/>
+        <!-- Robe shadow -->
+        <path d="M 130 110 L 170 110 L 188 350 L 112 350 Z" fill="url(#shadow)" opacity="0.4"/>
+      </svg>
+    </div>
+
+    <!-- Floating emoji -->
+    <div class="float-emoji" style="top: 8%;  left: 18%; animation-delay: 0s;">✨</div>
+    <div class="float-emoji" style="top: 14%; right: 16%; animation-delay: 0.6s;">🗿</div>
+    <div class="float-emoji" style="bottom: 22%; left: 8%; animation-delay: 1.2s;">💀</div>
+    <div class="float-emoji" style="bottom: 14%; right: 10%; animation-delay: 1.8s;">🔥</div>
+    <div class="float-emoji" style="top: 40%; left: 4%; animation-delay: 2.4s;">📈</div>
+
+    <!-- Stat -->
+    <div class="aura-stat" style="top: 4%; right: 4%;">+9000<br>AURA</div>
+
+    <!-- Labels -->
+    <div class="label gold"   style="--rot:-3deg; top: 4%;  left: 2%;  max-width: 220px; white-space: normal;">
+      HALO: ACTIVE LISTENING
+      <small>attunement maxxed</small>
+    </div>
+    <div class="label"        style="--rot: 4deg; top: 8%;  right: 2%; max-width: 220px; white-space: normal;">
+      UNCONDITIONAL POSITIVE REGARD
+      <small>at industrial scale</small>
+    </div>
+    <div class="label cyan"   style="--rot:-6deg; top: 42%; left: 1%;  max-width: 200px; white-space: normal;">
+      LEFT ARM: VALIDATION
+      <small>no irony detected</small>
+    </div>
+    <div class="label lime"   style="--rot: 6deg; top: 42%; right: 1%; max-width: 200px; white-space: normal;">
+      RIGHT ARM: BOUNDARIES
+      <small>load-bearing · clinical</small>
+    </div>
+    <div class="label lime"   style="--rot:-2deg; bottom: 22%; left: 2%; max-width: 220px; white-space: normal;">
+      ROBE: VAGUS NERVE
+      <small>parasympathetic drip</small>
+    </div>
+    <div class="label cyan"   style="--rot: 3deg; bottom: 6%; right: 4%; max-width: 220px; white-space: normal;">
+      PEDESTAL: PA LICENSURE
+      <small>granite, not vibes</small>
+    </div>
+    <div class="label red"    style="--rot:-1deg; bottom: 6%; left: 50%; transform: translateX(-50%) rotate(-1deg);">
+      ⚠ HEAL RESPONSIBLY
+    </div>
+
+  </div>
+</section>
+
+<section class="board">
+  <div class="board-header">
+    <h2>SOUND BOARD</h2>
+    <div class="meta">27 CUES · <kbd>ESC</kbd> STOPS<span class="now" id="now"></span></div>
+  </div>
+  <div class="grid" id="grid"></div>
+</section>
+
+<footer>
+  <span>Click a pad or smash its key · <kbd>Esc</kbd> stops all the brain rot</span>
+  <span>local mirror · audio in <code>./audio/</code></span>
+</footer>
 
 <script>
   const sounds = [
@@ -253,8 +612,8 @@
     pad.dataset.label = s.label;
     pad.innerHTML = `
       <span class="key">${s.key}</span>
-      <span class="index">${String(i + 1).padStart(2, '0')}</span>
-      <span class="label">${s.label}</span>
+      <span class="index">CUE ${String(i + 1).padStart(2, '0')}</span>
+      <span class="label-text">${s.label}</span>
       <span class="progress"></span>
     `;
     pad.addEventListener('click', () => play(s.label));
@@ -293,7 +652,7 @@
     a.currentTime = 0;
     a.play();
     currentLabel = label;
-    nowEl.textContent = '· ' + label;
+    nowEl.textContent = ' · ' + label;
     const pad = grid.querySelector(`[data-label="${cssEscape(label)}"]`);
     if (pad) pad.classList.add('playing');
   }
